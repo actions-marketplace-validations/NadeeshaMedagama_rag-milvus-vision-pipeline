@@ -47,16 +47,16 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set up QEMU for multi-platform builds
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@v4
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@v4
 
     - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v3
+      uses: docker/login-action@v4
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
@@ -64,7 +64,7 @@ jobs:
 
     - name: Extract Docker metadata
       id: meta
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
@@ -83,7 +83,7 @@ jobs:
 
     - name: Build and push Docker image
       id: build-push
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         context: .
         file: ./Dockerfile
@@ -97,7 +97,7 @@ jobs:
         sbom: true
 
     - name: Generate artifact attestation
-      uses: actions/attest-build-provenance@v2
+      uses: actions/attest-build-provenance@v4
       with:
         subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         subject-digest: ${{ steps.build-push.outputs.digest }}
@@ -137,10 +137,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         cache: 'pip'
@@ -199,7 +199,7 @@ jobs:
       run: python -m build
 
     - name: Upload package as artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: python-package-${{ steps.version.outputs.VERSION }}
         path: dist/
@@ -245,7 +245,7 @@ jobs:
 
     - name: Download Python package artifact
       if: needs.publish-python.result == 'success'
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: python-package-*
         path: ./packages/
